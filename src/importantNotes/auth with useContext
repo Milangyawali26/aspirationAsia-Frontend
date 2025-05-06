@@ -1,0 +1,128 @@
+
+
+// // src/context/AuthContext.js
+
+// import { createContext, useEffect, useState } from "react";
+
+// const AuthContext = createContext();
+
+// export const AuthProvider =({children})=>{
+//     const [user,setUser] = useState(null);
+//     const [token, setToken]=useState(null);
+
+//     useEffect(()=>{
+//         const storedUser=localStorage.getItem("authenticated user's data")
+//         const storedToken = localStorage.getItem("authToken")
+
+//         if(storedUser && storedToken){
+//             setUser(JSON.parse(storedUser));
+//             setToken(storedToken);
+//         }
+//     },[]);
+
+//     const login=(userData,authToken)=>{
+//         setUser(userData);
+//         setToken(authToken);
+//         localStorage.setItem("authenticated user's data".JSON.stringify(userData));
+//         localStorage.setItem("authToken",authToken);
+//     };
+
+//     const logout=()=>{
+//         setUser(null);
+//         setToken(null);
+//         localStorage.removeItem("authenticated user's data");
+//         localStorage.removeItem("authToken");
+
+//     };
+//     return (
+//         <AuthContext.Provider value={{user,token,login,logout}}>
+//             {children}
+//         </AuthContext.Provider>
+//     )
+// };
+
+// export const useAuth=()=>useContext(AuthContext)
+
+
+
+
+
+// // authController.js
+// import { API_URL } from "../common/base_api_service";
+
+// export const handleLogin = async(credentials)=>{
+//     try{
+//       const response = await fetch(`${API_URL}user/login`,{
+//         method:"POST",
+//         headers:{
+//           "Content-Type":"application/json"
+//         },
+//         body:JSON.stringify(credentials),
+  
+//       });
+
+//       if(!response.ok){
+//         const errorData= await response.json();
+//         throw new Error(errorData.message || " Login Failed ");
+//       }
+
+//       const authHeader = response.headers.get("authorization");
+//       const token = authHeader?.startsWith("Bearer ")? authHeader.split(" ")[1]:null;
+//       const data = await response.json();
+
+//       return {user: data.data , token}
+//     }catch(error){
+//       console.error("Login error:",error)
+//     }
+//    };
+
+//    export const submitLogin = async ({ values, navigate,login})=>{
+//     try {   
+//         const {user,token}= await handleLogin(values);
+//         login(user,token);
+//         toast.success("Login successfull");
+
+//         setTimeout(()=>{
+//             navigate("/dashboard");
+//         },500)
+        
+//     } catch (error) {
+//         toast.error(error.message || "Login Failed " );
+//         throw error;
+//     }
+//    };
+
+//    export const handleLogout = (logout,navigate)=>{
+//     logout();
+//     navigate('/login');
+//    }
+
+
+
+
+
+//    // src/routes/ProtectedRoute.jsx
+//    import { Navigate, RouterProvider } from "react-router-dom";
+//    import { useAuth } from "../context/AuthContext";
+// const ProtectedRoute=({children})=>{
+//     const {token} = useAuth();
+//     return token ? children: <Navigate to ='/login' replace />;
+
+// };
+// export default ProtectedRoute;
+
+
+
+
+
+// // src/App.jsx
+// function App(){
+//     return (
+//         <AuthProvider>
+//             <Toaster/>
+//             <RouterProvider router={router} />
+//         </AuthProvider>
+//     )
+// }
+
+// export default App;

@@ -7,7 +7,7 @@ const colorMap={
   green: 'bg-green-500 hover:bg-green-600',
 }
 
-const Button = ({ children, onClick ,type,btnColor }) => {
+const CustomButton = ({ children, onClick ,type,btnColor }) => {
   return (
     <div>
       <button
@@ -21,4 +21,4 @@ const Button = ({ children, onClick ,type,btnColor }) => {
   );
 };
 
-export default Button;
+export default CustomButton;

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import InputField from "../../../common/input_field";
-import Button from "../../../common/button";
+import CustomButton from "../../../common/button";
 import { useLocation, useNavigate } from "react-router-dom";
 import DropDownSelectField from "../../../common/drop_down_select_field";
 import {
@@ -10,8 +10,10 @@ import {
   updateHotelDetails,
 } from "../controller/hotel_admin_contoller";
 import { useHotelFormData } from "../controller/useHotelForm";
+import { FileButton, Button, Group, Text } from "@mantine/core";
 
 const HotelForm = () => {
+  const [file, setFile] = useState(null);
   const location = useLocation();
   const { hotelCategories, countries, cities } = useHotelFormData();
   const navigate = useNavigate();
@@ -28,7 +30,7 @@ const HotelForm = () => {
     countryId: "",
     cityId: "",
     address: hotelToEdit?.address || "",
-    image: hotelToEdit?.image || "",
+    image: "",
     email: hotelToEdit?.email || "",
     website: hotelToEdit?.website || "",
   };
@@ -46,7 +48,7 @@ const HotelForm = () => {
     countryId: Yup.string().required("Country is required"),
     cityId: Yup.string().required("City is required"),
     address: Yup.string().required("Address is required"),
-    image: Yup.string(), // optional
+    image: Yup.string(),
     email: Yup.string()
       .email("Invalid email format")
       .required("Email is required"),
@@ -54,7 +56,9 @@ const HotelForm = () => {
   });
 
   const handleSubmit = async (values) => {
-   (hotelToEdit?._id)?await updateHotelDetails({values}):  await addHotel({ values });
+    hotelToEdit?._id
+      ? await updateHotelDetails({ values })
+      : await addHotel({ values });
     navigate("/dashboard/hotel/allhotel");
   };
 
@@ -110,12 +114,12 @@ const HotelForm = () => {
           />
 
           <InputField label="Address" name="address" id="address" />
-          <InputField
+          {/* <InputField
             label="ImageUrl"
             name="image"
             id="image"
             placeholder="enter your image url"
-          />
+          /> */}
           <InputField label="Email" name="email" id="email" />
           <InputField
             label="WebSite"
@@ -123,10 +127,35 @@ const HotelForm = () => {
             id="website"
             placeholder="enter website url"
           />
-          <Button 
-          type="submit" btnColor="green">
+
+          <Field name="image">
+            {({ form }) => (
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(event) => {
+                  const file = event.currentTarget.files[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      form.setFieldValue("image", reader.result); // base64 string
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
+                className="border p-2"
+              />
+            )}
+          </Field>
+          <ErrorMessage
+            name="image"
+            component="div"
+            className="text-red-500 text-sm"
+          />
+
+          <CustomButton type="submit" btnColor="green">
             {hotelToEdit ? "Update" : "Submit"}
-          </Button>
+          </CustomButton>
         </Form>
       </Formik>
     </div>
